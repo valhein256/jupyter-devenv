@@ -11,6 +11,7 @@ boto = "^2.49.0"
 pydantic = {extras = ["dotenv"], version = "^1.8.1"}
 opencv-python = "^4.5.3"
 jupyter = "^1.0.0"
+matplotlib = "^3.4.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.2"
