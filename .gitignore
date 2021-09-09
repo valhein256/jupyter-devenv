@@ -7,6 +7,7 @@ __pycache__/
 *.swp
 *.swo
 *.ipynb
+.Trash-0/
 
 # Test binary, built with `go test -c`
 *.test
