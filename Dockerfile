@@ -1,4 +1,4 @@
-FROM python:3.9 AS Base
+FROM python:3.9 AS base
 
 ARG PROJECT_ENV
 
@@ -41,3 +41,11 @@ RUN echo "$PROJECT_ENV" \
     --no-interaction --no-ansi \
   # Cleaning poetry installation's cache for production:
   && if [ "$PROJECT_ENV" = 'production' ]; then rm -rf "$POETRY_CACHE_DIR"; fi
+
+
+FROM base AS develop
+
+WORKDIR /opt/app
+COPY . .
+EXPOSE 5031
+CMD exec gunicorn --log-config apps/gunicorn_logging.conf apps.main:app -w 2 --timeout 30 -b 0.0.0.0:5031 --limit-request-line 0 --limit-request-field_size 0
