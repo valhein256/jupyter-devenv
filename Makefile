@@ -53,8 +53,3 @@ jupyter:
 		-p 8888:8888 \
 		-it ${IMAGE_TAG} \
 		ipython notebook --port=8888 --ip=0.0.0.0 --allow-root
-
-launch-web:
-	@docker run \
-		-p 5031:5031 \
-		--rm ${IMAGE_TAG}
