@@ -13,11 +13,11 @@ RUN apt-get install -y \
         libpng-dev \
         libtiff-dev \
         libavformat-dev \
-        libpq-dev 
+        libpq-dev
 
 RUN rm -rf /var/lib/apt/lists/*
 
-WORKDIR /usr/local/lib
+WORKDIR /usr/local/lib/poetry
 
 # poetry:
 ENV POETRY_NO_INTERACTION=1 \
