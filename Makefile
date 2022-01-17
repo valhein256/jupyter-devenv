@@ -1,55 +1,67 @@
-SERVICE := jupyter
-STAGE := stg
-APP := main.py
+TAG := develop
 CREDENTIAL :=
-IMAGE_TAG := ${SERVICE}:${STAGE}
+JUPYTER_IMAGE_TAG := jupyter-${TAG}
+SERVICE_IMAGE_TAG := service-${TAG}
 
-.PHONY: config build scripts run devenv lint update
+build: build-jupyter build-service
 
-build:
-	@echo "Build docker iamge..."
-	@docker build -f ./Dockerfile . \
-		--build-arg PROJECT_ENV=${STAGE} \
-		-t ${IMAGE_TAG}
+# jupyter
+build-jupyter:
+	@echo "Build jupyter docker iamge..."
+	@docker build -f ./jupyter/Dockerfile . \
+		-t ${JUPYTER_IMAGE_TAG}
 
-run:
-ifeq (${CREDENTIAL}, true)
+launch-jupyter:
 	@docker run \
-		-v ${PWD}:/opt/app \
-		-e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
-		-e AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
-		-e AWS_SESSION_TOKEN=$(AWS_SESSION_TOKEN) \
-		-e AWS_SECURITY_TOKE=$(AWS_SECURITY_TOKEN) \
-		--rm ${IMAGE_TAG} \
-		python ${APP}
-else
-	@docker run \
-		-v ${PWD}:/opt/app \
-		--rm ${IMAGE_TAG} \
-		python ${APP}
-endif
+		-v ${PWD}/jupyter/ipynbfiles:/opt/app/ipynbfiles \
+		-v ${PWD}/dataset:/opt/app/dataset \
+		-v ${PWD}/models:/opt/app/models \
+		-p 8888:8888 \
+		--rm -it ${JUPYTER_IMAGE_TAG} \
+		jupyter notebook --port=8888 --ip=0.0.0.0 --allow-root
 
-devenv:
+jupyter-dev:
 	@docker run \
-		-v ${PWD}:/opt/app \
-		--rm -it ${IMAGE_TAG} \
+		-v ${PWD}/jupyter:/opt/app \
+		--rm -it ${JUPYTER_IMAGE_TAG} \
 		/bin/bash
 
+jupyter-libs-update:
+	@docker run \
+		-v ${PWD}/jupyter:/opt/app \
+		--rm -it ${JUPYTER_IMAGE_TAG} \
+		poetry update
+
+# service
+build-service:
+	@echo "Build jupyter docker iamge..."
+	@docker build -f ./service/Dockerfile . \
+		-t ${SERVICE_IMAGE_TAG}
+
+launch-service:
+	@docker run \
+		-v ${PWD}/service:/opt/app \
+		-p 5031:5031 \
+		--rm ${SERVICE_IMAGE_TAG}
+
+service-dev:
+	@docker run \
+		-v ${PWD}/service:/opt/app \
+		--rm -it ${SERVICE_IMAGE_TAG} \
+		/bin/bash
+
+service-libs-update:
+	@docker run \
+		-v ${PWD}/service:/opt/app \
+		--rm -it ${SERVICE_IMAGE_TAG} \
+		poetry update
+
+# lint and libs-update
 lint:
 	@docker run \
 		-v ${PWD}:/opt/app \
-		--rm ${IMAGE_TAG} \
+		--rm -it ${SERVICE_IMAGE_TAG} \
 		flake8 --ignore=E501
 
-update:
-	@docker run \
-		-v ${PWD}:/opt/app \
-		--rm ${IMAGE_TAG} \
-		poetry update
-
-jupyter:
-	@docker run \
-		-v ${PWD}:/opt/app \
-		-p 8888:8888 \
-		-it ${IMAGE_TAG} \
-		ipython notebook --port=8888 --ip=0.0.0.0 --allow-root
+clean-uploads-images:
+	@rm -rf ./service/static/uploads/*

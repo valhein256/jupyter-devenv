@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "image recognition"
+version = "0.1.0"
+description = ""
+authors = ["LWH"]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.11"
+jupyter = "^1.0.0"
+opencv-python = "^4.5.5"
+Pillow = "^9.0.0"
+matplotlib = "^3.5.1"
+tensorflow = "^2.7.0"
+h5py = "^3.6.0"
+pandas = "^1.3.5"
+imagesize = "^1.3.0"
+seaborn = "^0.11.2"
+sklearn = "^0.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
