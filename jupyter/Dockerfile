@@ -25,7 +25,7 @@ ENV POETRY_NO_INTERACTION=1 \
   POETRY_CACHE_DIR='/var/cache/pypoetry' \
   PATH="$PATH:/root/.poetry/bin"
 
-RUN curl -sSL 'https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py' | python
+RUN pip install poetry
 
 # Project initialization:
 COPY ./jupyter/pyproject.toml ./

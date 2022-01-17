@@ -28,7 +28,7 @@ RUN apt-get update \
 
 WORKDIR /usr/local/lib
 
-RUN curl -sSL 'https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py' | python
+RUN pip install poetry
 
 # Project initialization:
 COPY ./service/pyproject.toml .
